@@ -519,3 +519,17 @@ iframe.submit-btn {
 .mt-2 {
   margin-top: 10px;
 }
+
+.el-upload {
+  position: relative;
+}
+
+.ctrlv {
+  position: absolute;
+  top: 20%;
+  font-size: 12px;
+  color: #999;
+  width: 100%;
+  text-align: center;
+  height: auto;
+}
