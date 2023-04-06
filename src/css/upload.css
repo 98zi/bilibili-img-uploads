@@ -99,6 +99,7 @@ body {
 
 .config-item-label {
   color: #333;
+  white-space: nowrap;
 }
 
 .config-item-value {
@@ -538,7 +539,7 @@ iframe.submit-btn {
   position: fixed;
   left: 10px;
   top: 10px;
-  z-index: 99999;
+  z-index: 1;
 }
 
 .el-menu-vertical-demo .el-link {
@@ -553,4 +554,9 @@ iframe.submit-btn {
 
 .el-drawer.ltr {
   width: 300px !important;
+}
+
+.el-dialog {
+  width: 100% !important;
+  max-width: 600px !important;
 }

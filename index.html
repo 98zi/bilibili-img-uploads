@@ -48,7 +48,7 @@
       <div>
         重制版<el-link type="primary" href="https://github.com/lovezsh/bilibili-uploads-img">Github</el-link>，
         基于 <el-link type="primary"
-          href="https://github.com/xlzy520/bili-short-url">https://github.com/xlzy520/bili-short-url</el-link> 二次开发。
+          href="https://github.com/xlzy520/bili-short-url">https://github.com/xlzy520/bili-short-url</el-link> 开发。
       </div>
       <div class="config-item">
         <div class="config-item-label">SESSDATA：</div>
@@ -275,13 +275,21 @@
                     localUrl: file.url,
                   });
                   console.log(this.list);
-                  const imglist = JSON.parse(localStorage.getItem("imglist"));
-                  imglist.push({
-                    url,
-                    name: file.name,
-                    localUrl: file.url,
-                  });
-                  localStorage.setItem("imglist", JSON.stringify(imglist));
+                  const imglist = JSON.parse(localStorage.getItem('imglist'));
+
+                  /*
+                  * localStorage.getItem('imglist')
+                  * 如果true，执行写入程序
+                  */
+                  if (imglist) {
+                    imglist.push({
+                      url,
+                      name: file.name,
+                      localUrl: file.url,
+                    });
+                    localStorage.setItem('imglist', JSON.stringify(imglist));
+                  }
+
                 }
               })
               .catch(() => {
@@ -303,7 +311,7 @@
         this.SESSDATA = localStorage.getItem('SESSDATA') || '';
         this.bili_jct = localStorage.getItem('bili_jct') || '';
         if (!localStorage.getItem('imglist')) {
-          localStorage.setItem('imglist', []);
+          localStorage.setItem('imglist','[]');
         }
       },
     });

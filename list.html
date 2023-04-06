@@ -84,8 +84,11 @@
       },
       methods: {
         getImgList() {
-          const imglist = JSON.parse(localStorage.getItem("imglist"));
-          this.imglist = imglist;
+          if (localStorage.getItem('imglist')) {
+            const imglist = JSON.parse(localStorage.getItem("imglist"));
+            this.imglist = imglist;
+          }
+
         },
         deletedata(index, rows) {
           rows.splice(index, 1);
