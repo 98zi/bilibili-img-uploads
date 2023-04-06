@@ -1,0 +1,210 @@
+<script>
+  const baseUrl = 'https://service-ijd4slqi-1253419200.gz.apigw.tencentcs.com/release';
+
+  const app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        loading: false,
+        dialogImageUrl: '',
+        action: baseUrl + '/bili/upload',
+        fileList: [],
+        list: [],
+        SESSDATA: '',
+        bili_jct: '',
+        dialogVisible: false,
+        drawer: false,
+        direction: 'ltr',
+      };
+    },
+    computed: {
+      hasValue() {
+        return this.list.length > 0;
+      },
+    },
+    methods: {
+      saveConfig() {
+        localStorage.setItem('SESSDATA', this.SESSDATA);
+        localStorage.setItem('bili_jct', this.bili_jct);
+        this.$message.success('保存成功');
+        this.dialogVisible = false;
+      },
+      copyTextToClipboard(input) {
+        var el = document.createElement('textarea');
+
+        el.value = input;
+
+        // Prevent keyboard from showing on mobile
+        el.setAttribute('readonly', '');
+
+        el.style.contain = 'strict';
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        el.style.fontSize = '12pt'; // Prevent zooming on iOS
+
+        var selection = getSelection();
+        var originalRange = false;
+        if (selection.rangeCount > 0) {
+          originalRange = selection.getRangeAt(0);
+        }
+
+        document.body.appendChild(el);
+        el.select();
+
+        // Explicit selection workaround for iOS
+        el.selectionStart = 0;
+        el.selectionEnd = input.length;
+
+        var success = false;
+        try {
+          success = document.execCommand('copy');
+        } catch (err) { }
+
+        document.body.removeChild(el);
+
+        if (originalRange) {
+          selection.removeAllRanges();
+          selection.addRange(originalRange);
+        }
+
+        return success;
+      },
+      copy(url) {
+        this.copyTextToClipboard(url);
+        this.$message({
+          message: '复制成功',
+          type: 'success',
+        });
+      },
+      filterImages(items) {
+        let i = 0;
+        while (i < items.length) {
+          if (items[i].type.includes('image')) {
+            return items[i];
+          }
+          i++;
+        }
+        return false;
+      },
+      getFilename(e) {
+        let value;
+        if (window.clipboardData && window.clipboardData.getData) {
+          value = window.clipboardData.getData('Text');
+        } else if (e.clipboardData && e.clipboardData.getData) {
+          value = e.clipboardData.getData('text/plain');
+        }
+        value = value.split('\r');
+        return value[0];
+      },
+      getPasteImg(event) {
+        if (event.clipboardData && event.clipboardData.items) {
+          const image = this.filterImages(event.clipboardData.items);
+          if (image) {
+            event.preventDefault();
+            const file = image.getAsFile();
+            const name =
+              this.getFilename(event) || `image-${Date.now()}.png`;
+            file.uid = name;
+            const url = URL.createObjectURL(file);
+            return {
+              name,
+              file,
+              raw: file,
+              uid: name,
+              status: 'ready',
+              url,
+            };
+          }
+        }
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
+      handleTPaste(event) {
+        const image = this.getPasteImg(event);
+        if (image) {
+          this.fileList.push(image);
+          this.$nextTick(() => {
+            this.$refs.upload.submit(image);
+          });
+        }
+      },
+      handleUpload({ file }) {
+        if (this.SESSDATA == '' || this.bili_jct == '') {
+          this.$message.error('未配置！');
+          return false;
+        }
+        const reader = new FileReader();
+        // 当文件读取完成后执行的回调函数
+        reader.onload = (evt) => {
+          const base64 = reader.result;
+          // 上传图片
+          this.loading = true;
+          fetch(this.action, {
+            method: 'POST',
+            body: JSON.stringify({
+              cover: base64,
+              csrf: this.bili_jct,
+              SESSDATA: this.SESSDATA,
+            }),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              this.loading = false;
+              if (res.success) {
+                this.$message.success('上传成功');
+                const url = res.data.url;
+                file.url = url;
+                file.status = 'success';
+                // this.fileList.push(file);
+                this.list.push({
+                  url,
+                  name: file.name,
+                  localUrl: file.url,
+                });
+                console.log(this.list);
+                const imglist = JSON.parse(localStorage.getItem('imglist'));
+
+                /*
+                * localStorage.getItem('imglist')
+                * 如果true，执行写入程序
+                */
+                if (imglist) {
+                  imglist.unshift({
+                    url,
+                    name: file.name,
+                    localUrl: file.url,
+                  });
+                  localStorage.setItem('imglist', JSON.stringify(imglist));
+                }
+
+              }
+            })
+            .catch(() => {
+              this.fileList.pop();
+              this.$message.error('上传失败');
+            });
+        };
+        // 读取文件
+        reader.readAsDataURL(file);
+      },
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      }
+    },
+    mounted() {
+      this.SESSDATA = localStorage.getItem('SESSDATA') || '';
+      this.bili_jct = localStorage.getItem('bili_jct') || '';
+      if (!localStorage.getItem('imglist')) {
+        localStorage.setItem('imglist', '[]');
+      }
+    },
+  });
+</script>

@@ -1,0 +1,30 @@
+<!-- 配置弹窗 -->
+<el-row type="flex" class="row-bg" justify="space-between">
+  <el-col :span="20"></el-col>
+  <el-col :span="4">
+    <el-button type="text" @click="dialogVisible = true" icon="el-icon-s-tools">配置</el-button>
+  </el-col>
+</el-row>
+
+<el-dialog title="配置" :visible.sync="dialogVisible" width="30%" :close-on-click-modal="false" :append-to-body="true">
+  <div>
+    重制版<a href="https://github.com/lovezsh/bilibili-uploads-img">Github</a>，
+    基于 <a href="https://github.com/xlzy520/bili-short-url">https://github.com/xlzy520/bili-short-url</a> 开发。
+  </div>
+  <div class="config-item">
+    <div class="config-item-label">SESSDATA：</div>
+    <div class="config-item-value">
+      <el-input v-model="SESSDATA" placeholder="请输入SESSDATA"></el-input>
+    </div>
+  </div>
+  <div class="config-item">
+    <div class="config-item-label">bili_jct：</div>
+    <div class="config-item-value">
+      <el-input v-model="bili_jct" placeholder="请输入bili_jct"></el-input>
+    </div>
+  </div>
+
+  <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="saveConfig">保存配置</el-button>
+  </span>
+</el-dialog>

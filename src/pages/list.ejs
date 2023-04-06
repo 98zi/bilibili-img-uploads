@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>已上传列表</title>
+  <meta name="referrer" content="no-referrer" />
+  <script src="/js/vue.js"></script>
+  <script src="/element/index.js"></script>
+  <link href="/element/index.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/upload.css" />
+</head>
+
+<body>
+  <div id="app" v-loading="loading">
+    <%- include('components/sidebar'); %>
+
+      <el-row type="flex" class="row-bg" justify="space-between">
+        <el-col :span="6"></el-col>
+      </el-row>
+
+      <%- include('modules/list/index'); %>
+
+  </div>
+
+  <%- include('modules/list/script'); %>
+</body>
+
+</html>

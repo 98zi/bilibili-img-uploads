@@ -1,0 +1,129 @@
+<script>
+
+  const app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        loading: false,
+        imglist: [],
+        dialogVisible: false,
+        drawer: false,
+        direction: 'ltr',
+      };
+    },
+    methods: {
+      getImgList() {
+        if (localStorage.getItem('imglist')) {
+          const imglist = JSON.parse(localStorage.getItem("imglist"));
+          this.imglist = imglist;
+        }
+
+      },
+      deletedata(index, rows) {
+        rows.splice(index, 1);
+        localStorage.setItem("imglist", JSON.stringify(this.imglist));
+        this.$message({
+          message: '删除成功',
+          type: 'success',
+        });
+      },
+      copyTextToClipboard(input) {
+        var el = document.createElement('textarea');
+
+        el.value = input;
+
+        // Prevent keyboard from showing on mobile
+        el.setAttribute('readonly', '');
+
+        el.style.contain = 'strict';
+        el.style.position = 'absolute';
+        el.style.left = '-9999px';
+        el.style.fontSize = '12pt'; // Prevent zooming on iOS
+
+        var selection = getSelection();
+        var originalRange = false;
+        if (selection.rangeCount > 0) {
+          originalRange = selection.getRangeAt(0);
+        }
+
+        document.body.appendChild(el);
+        el.select();
+
+        // Explicit selection workaround for iOS
+        el.selectionStart = 0;
+        el.selectionEnd = input.length;
+
+        var success = false;
+        try {
+          success = document.execCommand('copy');
+        } catch (err) { }
+
+        document.body.removeChild(el);
+
+        if (originalRange) {
+          selection.removeAllRanges();
+          selection.addRange(originalRange);
+        }
+
+        return success;
+      },
+      copy(url) {
+        this.copyTextToClipboard(url);
+        this.$message({
+          message: '复制成功',
+          type: 'success',
+        });
+      },
+      filterImages(items) {
+        let i = 0;
+        while (i < items.length) {
+          if (items[i].type.includes('image')) {
+            return items[i];
+          }
+          i++;
+        }
+        return false;
+      },
+      getFilename(e) {
+        let value;
+        if (window.clipboardData && window.clipboardData.getData) {
+          value = window.clipboardData.getData('Text');
+        } else if (e.clipboardData && e.clipboardData.getData) {
+          value = e.clipboardData.getData('text/plain');
+        }
+        value = value.split('\r');
+        return value[0];
+      },
+      getPasteImg(event) {
+        if (event.clipboardData && event.clipboardData.items) {
+          const image = this.filterImages(event.clipboardData.items);
+          if (image) {
+            event.preventDefault();
+            const file = image.getAsFile();
+            const name =
+              this.getFilename(event) || `image-${Date.now()}.png`;
+            file.uid = name;
+            const url = URL.createObjectURL(file);
+            return {
+              name,
+              file,
+              raw: file,
+              uid: name,
+              status: 'ready',
+              url,
+            };
+          }
+        }
+      },
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      }
+    },
+    mounted() {
+      this.getImgList();
+    },
+  });
+</script>

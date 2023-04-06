@@ -1,0 +1,19 @@
+<el-button po @click="drawer = true" type="primary" icon="el-icon-s-unfold" class="menu"></el-button>
+<el-drawer :visible.sync="drawer" :direction="direction">
+  <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+    <a type="primary" href="./">
+      <el-menu-item index="1">
+        <i class="el-icon-menu"></i>
+        <span slot="title">上传</span>
+      </el-menu-item>
+    </a>
+
+    <a type="primary" href="./list.html">
+      <el-menu-item index="2">
+        <i class="el-icon-document"></i>
+        <span slot="title">列表</span>
+      </el-menu-item>
+    </a>
+
+  </el-menu>
+</el-drawer>
