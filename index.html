@@ -87,7 +87,7 @@
 
   <script>
     const isDev = location.hostname === 'localhost';
-    const baseUrl = isDev ? 'http://localhost:5000' : 'https://service-ijd4slqi-1253419200.gz.apigw.tencentcs.com/release';
+    const baseUrl = isDev ? 'http://localhost:5500' : 'https://service-ijd4slqi-1253419200.gz.apigw.tencentcs.com/release';
 
     const app = new Vue({
       el: '#app',
@@ -275,6 +275,7 @@
       mounted() {
         this.SESSDATA = localStorage.getItem('SESSDATA') || '';
         this.bili_jct = localStorage.getItem('bili_jct') || '';
+        localStorage.setItem("imglist", JSON.stringify([]));
       },
     });
   </script>
